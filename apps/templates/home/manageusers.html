@@ -1,0 +1,313 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Dashboard {% endblock %} 
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+<!-- <link rel="stylesheet" type="text/css" href="/static/assets/js/DataTables/datatables.min.css"> -->
+<!-- <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css"> -->
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.3.0/css/responsive.dataTables.css">
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/dataTables.bootstrap4.min.css">
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/css/bootstrap.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.2/dist/leaflet.css"
+integrity="sha256-sA+zWATbFveLLNqWO2gtiw3HL/lh1giY/Inf1BJ0z14="
+crossorigin=""/>
+<link rel="stylesheet" href="/static/assets/js/Leaflet.markercluster-1.4.1/dist/MarkerCluster.css" />
+<link rel="stylesheet" href="/static/assets/js/Leaflet.markercluster-1.4.1/dist/MarkerCluster.Default.css" />
+  
+<style>
+  .dot {
+    height: 15px;
+    width: 15px;
+    background-color: #bbb;
+    border-radius: 50%;
+    display: inline-block;
+  }
+</style>
+{% endblock stylesheets %} 
+
+{% block content %}
+    <div class="modal fade" id="editUserModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg" style="min-width:90%;">
+        <div class="modal-content">
+          <div class="modal-body">
+              <div class="row">
+                <div class="col-md-6">
+                  <input type="hidden" value="" id="userIDE">
+                  <label><b>Nome</b></label>
+                  <input class='form-control' type='text' id='nameE'/>
+                  <label><b>E-mail</b></label>
+                  <input class='form-control' type='email' id='emailE' disabled/>
+                  <label><b>Usuário</b></label>
+                  <input class='form-control' type='text' id='usernameE'/>
+                </div>
+                <div class="col-md-6">
+                  <label><b>Permissão</b></label>
+                  <select class="form-control selectpicker" id="permissionE" title="Nenhuma Seleção">
+                    <option value="1">Usuário Comum</option>
+                    <option value="2">Editor</option>
+                    <option value="3">Admin</option>
+                  </select><br>
+                  <label><b>Status</b></label>
+                  <select class="form-control selectpicker" id="statusE" title="Nenhuma Seleção">
+                    <option value="1">Ativo</option>
+                    <option value="0">Inativo</option>
+                  </select>
+                </div>
+              </div>
+          </div>
+          <div class="modal-footer">
+            <!-- <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button> -->
+            <button type="button" class="btn btn-success" onclick="saveUser()">Salvar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      
+
+      <div class="col-lg-12 col-md-12">
+        <div class="card">
+          <div class="card-header card-header-tabs card-header-info">
+            <div class="nav-tabs-navigation">
+              <div class="nav-tabs-wrapper">
+                <h4 class="card-title">Usuários</h4>
+                <!-- <button type="button" class="btn btn-sm btn-success pull-right" style="border-radius:30px;" data-toggle="modal" data-target="#novoUserModal"><span class="material-symbols-outlined">add</span><br> Novo Usuário</button> -->
+              </div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-lg-12">
+                <table id="users-table" class="table table-striped responsive " style="width:100%; font-family: 'Times New Roman'">
+                  <thead>
+                    <tr>
+                        <th>Nome&ensp;&ensp;&ensp;</th>
+                        <th>e-mail</th>
+                        <th>Usuário</th>
+                        <th>Permissao</th>
+                        <th>Status</th>
+                        <th>Último Login</th>
+                        <th>Editar</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div> 
+    </div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+
+    <!--  Google Maps Plugin    -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC0GlJs8ySzPzHaCsQ3pORg5pbsTQbiars"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <script src="https://raw.githubusercontent.com/google/palette.js/master/palette.js"></script>
+
+
+
+    <script src="https://unpkg.com/leaflet@1.9.2/dist/leaflet.js"
+    integrity="sha256-o9N1jGDZrf5tS+Ft4gbIK7mYMipq9lqpVJ91xHSyKhg="
+    crossorigin=""></script>
+    <script src="/static/assets/js/Leaflet.markercluster-1.4.1/dist/leaflet.markercluster-src.js"></script>
+
+
+    
+    <script src="/static/assets/js/pelc_specific/maps.js"></script>
+
+
+
+    <script>
+      
+      let userTable;
+      function loadDataTables(){
+
+        userTable = $('#users-table').DataTable({
+            // data: tableData['projetos'],
+            selectable:true,
+            // select: {
+            //   style: 'multi'
+            // },
+            responsive: true,
+            orderCellsTop: true,
+            // dom: 'Bfrtip',
+            language: {
+              "url": "https://cdn.datatables.net/plug-ins/1.12.1/i18n/pt-BR.json"
+            },
+            processing: true,
+            // serverSide: true,
+            ajax: {
+                url: "getUsersData",
+                type: "POST",
+                data:{
+                  data: 'data',
+                  csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+            },
+            columns: [
+                    {
+                      data: null,
+                      orderable: true,
+                      mRender: function ( data, type, row, meta ) {
+                        return data.first_name;
+                      }
+                    },
+                    {
+                      data: 'email',
+                      orderable: true
+                    },
+                    {
+                      data: 'username',
+                      orderable: true
+                    },
+                    {
+                      data: null,
+                      width:'150px',
+                      mRender: function ( data, type, row, meta ) {
+                        // is_superuser,is_staff
+                        if (!data.is_superuser && !data.is_staff){
+                          return "Usuário Comum";
+                        }else if(!data.is_superuser && data.is_staff){
+                          return "Editor";
+                        }else if(data.is_superuser && data.is_staff){
+                          return "Admin";
+                        }else{
+                          return "?";
+                        }
+                      }
+                    },
+                    {
+                      data: null,
+                      mRender: function ( data, type, row, meta ) {
+                        // is_superuser,is_staff
+                        if (data.is_active == true){
+                          return "<span class='dot' title='Ativo' style='background-color:green'></span>";
+                        }else{
+                          return "<span class='dot' title='Inativo' style='background-color:red'></span>";
+                        }
+                      },
+                      class: 'text-center',
+                      orderable: true
+                    },
+                    {
+                      data: null,
+                      mRender: function ( data, type, row, meta ) {
+                        // is_superuser,is_staff
+                        if (data.last_login){
+                          return (data.last_login).replace('T',' ').replace('Z','');
+                        }else{
+                          return "-";
+                        }
+                      },
+                      orderable: true
+                    },
+                    {
+                      data: null,
+                      render: function ( data, type, row, meta ) {
+                        return "<a href='javascript:void(0);' onclick='openEditModal("+JSON.stringify(row)+")' ><span class='material-symbols-outlined'>edit</span></a>";
+                      }
+                    }
+                  ]
+        });
+
+        userTable.on( 'xhr', function () {
+          projJson = userTable.ajax.json();
+        });
+
+        
+      }
+
+      $(document).ready(function() {
+        loadDataTables();
+      });
+
+      function saveUser(){
+        
+        payloadData = {
+          'id':$('#userIDE').val(),
+          'name':$('#nameE').val(),
+          'email':$('#emailE').val(),
+          'username':$('#usernameE').val(),
+          'permissao':$('#permissionE').val(),
+          'status':$('#statusE').val(),
+        }
+
+        $.post({
+        url: "updateUser",
+        type: "POST",
+        dataType: 'json',
+        beforeSend: function() {
+          swal.fire({
+            html: '<h5>Carregando...</h5>',
+            showConfirmButton: false,
+            onRender: function() {
+                // there will only ever be one sweet alert open.
+                $('.swal2-content').prepend(sweet_loader);
+                }
+            });
+            swal.showLoading();
+        },
+        data:{
+          data: JSON.stringify(payloadData),
+          csrfmiddlewaretoken: '{{ csrf_token }}'
+          },
+        })
+        .done (function(data, textStatus, jqXHR) {
+          Swal.fire({
+              type:'success',
+              title: 'Usuário atualizado com sucesso!',
+          });
+          
+          $('#users-table').DataTable().ajax.reload();
+          $('#editUserModal').modal('toggle');
+        })
+        .fail (function(jqXHR, textStatus, errorThrown) {
+          Swal.fire({
+              type:'error',
+              title: 'Algo deu errado ao atualizar o usuário!',
+          });
+          response = 'failed';
+        })
+        .always (function(jqXHROrData, textStatus, jqXHROrErrorThrown) {
+        });
+      }
+      
+      function openEditModal(data){
+        if(data.is_staff && data.is_superuser){
+          $("#permissionE").val(3);
+        }else if(data.is_staff && !data.is_superuser ){
+          $("#permissionE").val(2);
+        }else if(!data.is_staff && !data.is_superuser ){
+          $("#permissionE").val(1);
+        }
+
+        if (data.is_active){
+          $("#statusE").val(1);
+        }else{
+          $("#statusE").val(0);
+        }
+
+        $("#permissionE").selectpicker('refresh');
+        $("#statusE").selectpicker('refresh');
+
+        $("#usernameE").val(data.username);
+        $("#emailE").val(data.email);
+        $("#nameE").val(data.first_name);
+        $("#userIDE").val(data.id);
+        
+        $('#editUserModal').modal('show');
+      }
+
+   </script>
+
+{% endblock javascripts %}
