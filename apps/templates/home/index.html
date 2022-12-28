@@ -3,6 +3,7 @@
 {% block title %} Sala de Situação {% endblock %} 
 
 <!-- Specific Page CSS goes HERE  -->
+
 {% block stylesheets %}
 <style>
 col-md-4 {
@@ -32,11 +33,35 @@ body{
 
 {% block content %}
 
+
+  <div class="modal" tabindex="-1" role="dialog" id="modalComunicacao">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Links de contato</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <ul style="list-style:none">
+            <li><i class="fa-brands fa-facebook"></i><a href="https://www.facebook.com/sedeerirj/" target="_blank"> Facebook</a></li>
+            <li><i class="fa-brands fa-instagram"></i><a href="https://www.instagram.com/sedeerirj/" target="_blank"> Instagram</a></li>
+            <li><i class="fab fa-linkedin-in"></i><a href="https://www.linkedin.com/company/sedeeri/" target="_blank"> Linkdin</a></li>
+            <li><i class="fa-solid fa-newspaper"></i><a href="http://www.desenveconomico.rj.gov.br/noticias/" target="_blank"> Notícias</a></li>
+          </ul>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+        </div>
+      </div>
+    </div>
+  </div>
     <div class="row">
       <div class="col-md-1"></div>
       <div class="col-md-3">
         <div class="card card-chart">
-          <div class="card-header card-header-warning" style="background-image:url(/static/assets/img/1.png);background-repeat: no-repeat; background-size:cover;height:90px" onclick="openLink('google.com')">
+          <div class="card-header card-header-warning" style="background-image:url(/static/assets/img/1.png);background-repeat: no-repeat; background-size:100%;height:85px" onclick="openLink('http://sedeeri.fpsti.com.br/projetos')">
           </div>
           <div class="card-footer">
             <div class="stats">
@@ -48,7 +73,7 @@ body{
       <div class="col-md-1"></div>
       <div class="col-md-3">
         <div class="card card-chart">
-          <div class="card-header card-header-warning" style="background-image:url(/static/assets/img/2.png);background-repeat: no-repeat; background-size:cover;height:90px" onclick="openLink('google.com')">
+          <div class="card-header card-header-warning" style="background-image:url(/static/assets/img/2.png);background-repeat: no-repeat; background-size:100%;height:85px" onclick="openLink('https://sei.fazenda.rj.gov.br/sip/login.php?sigla_orgao_sistema=ERJ&sigla_sistema=SEI&infra_url=L3NlaS8=')">
           </div>
           <div class="card-footer">
             <div class="stats">
@@ -60,7 +85,7 @@ body{
       <div class="col-md-1"></div>
       <div class="col-md-3">
         <div class="card card-chart">
-          <div class="card-header card-header-warning" style="background-image:url(/static/assets/img/3.png);background-repeat: no-repeat; background-size:cover;height:90px" onclick="openLink('google.com')">
+          <div class="card-header card-header-warning" style="background-image:url(/static/assets/img/3.png);background-repeat: no-repeat; background-size:100%;height:85px" data-target="#modalComunicacao" data-toggle="modal">
           </div>
           <div class="card-footer">
             <div class="stats">
@@ -74,11 +99,11 @@ body{
       <div class="col-md-1"></div>
       <div class="col-md-3">
         <div class="card card-chart">
-          <div class="card-header card-header-warning" style="background-image:url(/static/assets/img/4.png);background-repeat: no-repeat; background-size:cover;height:90px" onclick="openLink('google.com')">
+          <div class="card-header card-header-warning" style="background-image:url(/static/assets/img/4.png);background-repeat: no-repeat; background-size:100%;height:85px" onclick="openLink('http://www.fazenda.rj.gov.br/siaferio/adfAuthentication?success_url=/faces/wcnav_defaultSelection')">
           </div>
           <div class="card-footer">
             <div class="stats">
-              <i class="material-icons" style="color:red">circle</i> Em Desenvolvimento
+              <i class="material-icons" style="color:green">circle</i> Online
             </div>
           </div>
         </div>
@@ -90,11 +115,11 @@ body{
       <div class="col-md-1"></div>
       <div class="col-md-3">
         <div class="card card-chart">
-          <div class="card-header card-header-warning" style="background-image:url(/static/assets/img/5.png);background-repeat: no-repeat; background-size:cover;height:90px" onclick="openLink('google.com')">
+          <div class="card-header card-header-warning" style="background-image:url(/static/assets/img/5.png);background-repeat: no-repeat; background-size:100%;height:85px" onclick="openLink('#')">
           </div>
           <div class="card-footer">
             <div class="stats">
-              <i class="material-icons" style="color:green">circle</i> Online
+              <i class="material-icons" style="color:red">circle</i> Em Desenvolvimento
             </div>
           </div>
         </div>
@@ -104,11 +129,11 @@ body{
       <div class="col-md-1"></div>
       <div class="col-md-3">
         <div class="card card-chart">
-          <div class="card-header card-header-warning" style="background-image:url(/static/assets/img/6.png);background-repeat: no-repeat; background-size:cover;height:90px" onclick="openLink('google.com')">
+          <div class="card-header card-header-warning" style="background-image:url(/static/assets/img/6.png);background-repeat: no-repeat; background-size:100%;height:85px" onclick="openLink('http://www3.alerj.rj.gov.br/lotus_notes/default.asp?id=144')">
           </div>
           <div class="card-footer">
             <div class="stats">
-              <i class="material-icons" style="color:red">circle</i> Em Desenvolvimento
+              <i class="material-icons" style="color:green">circle</i> Online
             </div>
           </div>
         </div>
@@ -119,7 +144,7 @@ body{
       <div class="col-md-1"></div>
       <div class="col-md-3">
         <div class="card card-chart">
-          <div class="card-header card-header-warning" style="background-image:url(/static/assets/img/7.png);background-repeat: no-repeat; background-size:cover;height:90px" onclick="openLink('google.com')">
+          <div class="card-header card-header-warning" style="background-image:url(/static/assets/img/7.png);background-repeat: no-repeat; background-size:100%;height:85px" onclick="openLink('https://realizamaisrj.com.br/Account/Login?ReturnUrl=%2FHome%2FIndex')">
           </div>
           <div class="card-footer">
             <div class="stats">
@@ -138,12 +163,17 @@ body{
   <script>
     // $(document).ready(function() {
     //   // Javascript method's body can be found in assets/js/demos.js
-    //   md.initDashboardPageCharts();
+    //   md.initDashboardPageCharts();  
 
     // });
 
     function openLink(link){
-      window.open(link, '_blank').focus();
+      if(link=='#'){
+        swal.fire('Em Desenvolvimento','','error');
+      }else{
+        window.open(link, '_blank').focus();
+      }
+      
     }
   </script>
 
