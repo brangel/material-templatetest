@@ -8,6 +8,7 @@
             <span class="navbar-toggler-icon icon-bar"></span>
             <span class="navbar-toggler-icon icon-bar"></span>
           </button>
+          <div><a onclick="goHome()" style="cursor:pointer"><span class="material-icons">home</span></a></div>
 
           <div class="collapse navbar-collapse justify-content-end">
             
@@ -43,3 +44,16 @@
         
         </div>
       </nav>
+
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+
+  <script>
+
+    function goHome(link){
+      window.location="/";
+    }
+  </script>
+
+{% endblock javascripts %}
