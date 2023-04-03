@@ -12,6 +12,9 @@ urlpatterns = [
     path('', views.index, name='home'),
 
     path('getUsersData', views.get_users),
+    path('createUser', views.create_users),
+    path('deleteUser', views.delete_user),
+    path('updateUser', views.update_user),
 
 
     # Matches any html file
