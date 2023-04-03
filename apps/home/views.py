@@ -29,7 +29,6 @@ def pages(request):
     # All resource paths end in .html.
     # Pick out the html file name from the url. And load that template.
     try:
-        print('tried this')
         load_template = request.path.split('/')[-1]
 
         if load_template == 'admin':
@@ -39,14 +38,11 @@ def pages(request):
         html_template = loader.get_template('home/' + load_template)
         return HttpResponse(html_template.render(context, request))
 
-    except template.TemplateDoesNotExist as ex:
-        print(ex)
-        print('then this')
+    except template.TemplateDoesNotExist:
         html_template = loader.get_template('home/page-404.html')
         return HttpResponse(html_template.render(context, request))
 
     except:
-        print('finally this')
         html_template = loader.get_template('home/page-500.html')
         return HttpResponse(html_template.render(context, request))
 

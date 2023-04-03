@@ -30,7 +30,7 @@
                 </a> 
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownProfile">
                   {% if request.user.is_superuser %}
-                  <a class="dropdown-item" href="/manageUsers.html" >Gerenciar Usuários</a>
+                  <a class="dropdown-item" href="/manageusers.html" >Gerenciar Usuários</a>
                   {% endif %}
                   <a class="dropdown-item" href="{% url 'logout' %}" >Sair</a>
                 </div>
