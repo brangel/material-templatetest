@@ -18,7 +18,7 @@ SECRET_KEY = config('SECRET_KEY', default='S#perS3crEt_1122dsasdDE#$!!')
 DEBUG = config('DEBUG', default=True, cast=bool)
 
 # load production server from .env
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'sedeeri.webmetrix.pro', config('SERVER', default='127.0.0.1')]
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'salasituacao.webmetrix.pro', config('SERVER', default='127.0.0.1')]
 
 # Application definition
 
@@ -55,7 +55,6 @@ TEMPLATES = [
         'DIRS': [TEMPLATE_DIR],
         'APP_DIRS': True,
         'OPTIONS': {
-            'debug': True,
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
@@ -118,7 +117,8 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
-STATIC_ROOT = os.path.join(CORE_DIR, 'staticfiles')
+#STATIC_ROOT = os.path.join(CORE_DIR, 'staticfiles')
+STATIC_ROOT = "/var/www/sedeeri.webmetrix.pro/static"
 STATIC_URL = '/static/'
 
 # Extra places for collectstatic to find static files.
