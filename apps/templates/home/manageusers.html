@@ -16,7 +16,7 @@ integrity="sha256-sA+zWATbFveLLNqWO2gtiw3HL/lh1giY/Inf1BJ0z14="
 crossorigin=""/>
 <link rel="stylesheet" href="/static/assets/js/Leaflet.markercluster-1.4.1/dist/MarkerCluster.css" />
 <link rel="stylesheet" href="/static/assets/js/Leaflet.markercluster-1.4.1/dist/MarkerCluster.Default.css" />
-  
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
 <style>
   .dot {
     height: 15px;
@@ -47,7 +47,6 @@ crossorigin=""/>
                   <label><b>Permissão</b></label>
                   <select class="form-control selectpicker" id="permissionE" title="Nenhuma Seleção">
                     <option value="1">Usuário Comum</option>
-                    <option value="2">Editor</option>
                     <option value="3">Admin</option>
                   </select><br>
                   <label><b>Status</b></label>
@@ -65,16 +64,50 @@ crossorigin=""/>
         </div>
       </div>
     </div>
+    <div class="modal fade" id="novoUserModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg" style="min-width:90%;">
+        <div class="modal-content">
+          <div class="modal-body">
+              <div class="row">
+                <div class="col-md-6">
+                  <label><b>Nome</b></label>
+                  <input class='form-control' type='text' id='nameC' required />
+                  <label><b>E-mail</b></label>
+                  <input class='form-control' type='email' id='emailC' required />
+                  <label><b>Usuário</b></label>
+                  <input class='form-control' type='text' id='usernameC' required />
+                </div>
+                <div class="col-md-6">
+                  <label><b>Permissão</b></label>
+                  <select class="form-control selectpicker" id="permissionC" title="Nenhuma Seleção" required>
+                    <option value="1">Usuário Comum</option>
+                    <option value="2">Admin</option>
+                  </select><br>
+                  <label><b>Status</b></label>
+                  <select class="form-control selectpicker" id="statusC" title="Nenhuma Seleção" required>
+                    <option value="1" selected="selected">Ativo</option>
+                    <option value="0">Inativo</option>
+                  </select>
+                </div>
+              </div>
+          </div>
+          <div class="modal-footer">
+            <!-- <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button> -->
+            <button type="button" class="btn btn-success" onclick="createUser()">Criar</button>
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="row">
       
 
-      <div class="col-lg-12 col-md-12">
+      <div class="col-lg-12 col-md-12" style="margin-bottom:15em">
         <div class="card">
           <div class="card-header card-header-tabs card-header-info">
             <div class="nav-tabs-navigation">
               <div class="nav-tabs-wrapper">
                 <h4 class="card-title">Usuários</h4>
-                <!-- <button type="button" class="btn btn-sm btn-success pull-right" style="border-radius:30px;" data-toggle="modal" data-target="#novoUserModal"><span class="material-symbols-outlined">add</span><br> Novo Usuário</button> -->
+                <button type="button" class="btn btn-sm btn-success pull-right" style="border-radius:30px;" data-toggle="modal" data-target="#novoUserModal"><span class="material-symbols-outlined">add</span><br> Novo Usuário</button>
               </div>
             </div>
           </div>
@@ -91,6 +124,7 @@ crossorigin=""/>
                         <th>Status</th>
                         <th>Último Login</th>
                         <th>Editar</th>
+                        <th>Excluir</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -215,7 +249,15 @@ crossorigin=""/>
                       data: null,
                       render: function ( data, type, row, meta ) {
                         return "<a href='javascript:void(0);' onclick='openEditModal("+JSON.stringify(row)+")' ><span class='material-symbols-outlined'>edit</span></a>";
-                      }
+                      },
+                      className:'text-center'
+                    },
+                    {
+                      data: null,
+                      render: function ( data, type, row, meta ) {
+                        return "<a style='color:red' href='javascript:void(0);' onclick='deleteUser("+JSON.stringify(row)+")' ><span class='material-symbols-outlined'>delete</span></a>";
+                      },
+                      className:'text-center'
                     }
                   ]
         });
@@ -230,6 +272,71 @@ crossorigin=""/>
       $(document).ready(function() {
         loadDataTables();
       });
+
+      function createUser(){
+
+        payloadData = {
+          'name':$('#nameC').val(),
+          'email':$('#emailC').val(),
+          'username':$('#usernameC').val(),
+          'permissao':$('#permissionC').val(),
+          'status':$('#statusC').val()
+        }
+        for(let key in payloadData) {
+          if(payloadData[key] === "") {
+            swal.fire('Preencha todos os campos obrigatórios','','warning');
+            return;
+          }
+        }
+
+        $.post({
+        url: "createUser",
+        type: "POST",
+        dataType: 'json',
+        beforeSend: function() {
+          swal.fire({
+            html: '<h5>Carregando...</h5>',
+            showConfirmButton: false,
+            onRender: function() {
+                // there will only ever be one sweet alert open.
+                $('.swal2-content').prepend(sweet_loader);
+                }
+            });
+            swal.showLoading();
+        },
+        data:{
+          data: JSON.stringify(payloadData),
+          csrfmiddlewaretoken: '{{ csrf_token }}'
+          },
+        })
+        .done (function(data, textStatus, jqXHR) {
+          if(data.msg == "success"){
+            Swal.fire({
+              type:'success',
+              title: 'Usuário criado com sucesso!',
+              html: 'Senha do usuário: <span style="background-color:yellow">'+data.pwd+'</span><br><br><i>(essa senha só será mostrado uma vez !)</i>'
+            });
+            $('#users-table').DataTable().ajax.reload();
+            $('#novoUserModal').modal('toggle');
+          }else{
+            Swal.fire({
+              type:'error',
+              title: data.msg,
+            });
+            console.log(data);
+          }
+        })
+        .fail (function(jqXHR, textStatus, errorThrown) {
+          Swal.fire({
+              type:'error',
+              title: 'Algo deu errado ao criar o usuário!',
+          });
+          response = 'failed';
+        })
+        .always (function(jqXHROrData, textStatus, jqXHROrErrorThrown) {
+        });
+
+      }
 
       function saveUser(){
         
@@ -282,6 +389,60 @@ crossorigin=""/>
         });
       }
       
+      function deleteUser(data){
+        payloadData = {
+          'id':data.id
+        }
+
+        Swal.fire({
+          title: 'Excluir Usuário?',
+          html:"Essa ação não pode ser desfeita",
+          showDenyButton: true,
+          showCancelButton: true,
+          confirmButtonText: 'Sim',
+          cancelButtonText: `Não`,
+        }).then((result) => {
+          if (result.value) {
+            $.post({
+            url: "deleteUser",
+            type: "POST",
+            dataType: 'json',
+            beforeSend: function() {
+              swal.fire({
+                html: '<h5>Carregando...</h5>',
+                showConfirmButton: false,
+                onRender: function() {
+                    $('.swal2-content').prepend(sweet_loader);
+                  }
+                });
+                swal.showLoading();
+            },
+            data:{
+              data: JSON.stringify(payloadData),
+              csrfmiddlewaretoken: '{{ csrf_token }}'
+              },
+            })
+            .done (function(data, textStatus, jqXHR) {
+              Swal.fire({
+                  type:'success',
+                  title: 'Usuário excluído com sucesso!',
+              });
+              
+              $('#users-table').DataTable().ajax.reload();
+            })
+            .fail (function(jqXHR, textStatus, errorThrown) {
+              Swal.fire({
+                  type:'error',
+                  title: 'Algo deu errado ao deletar o usuário!',
+              });
+              response = 'failed';
+            })
+            .always (function(jqXHROrData, textStatus, jqXHROrErrorThrown) {
+            });
+          }
+        })
+      }
+
       function openEditModal(data){
         if(data.is_staff && data.is_superuser){
           $("#permissionE").val(3);
@@ -307,6 +468,10 @@ crossorigin=""/>
         
         $('#editUserModal').modal('show');
       }
+
+      {% if not user.is_superuser %}
+          window.location.href='/';
+      {% endif %}
 
    </script>
 
