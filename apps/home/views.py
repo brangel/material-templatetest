@@ -52,7 +52,8 @@ def create_users(request):
         DOCs:
     """
     err=''
-    pwd = ''.join(random.choice(string.printable) for i in range(12))
+    # pwd = ''.join(random.choice(string.printable) for i in range(12))
+    pwd = "12sedeics34q"
 
     requestData = json.loads(request.POST.get("data"))
     if requestData['permissao'] == "admin":
